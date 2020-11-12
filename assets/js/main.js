@@ -1,174 +1,170 @@
 /* $( document ).ready( function () { */
-var url = 'https://api.openweathermap.org/data/2.5/forecast?q=';
-var urlUVI = 'https://api.openweathermap.org/data/2.5/onecall?';
+var wUrl = 'https://api.openweathermap.org/data/2.5/forecast?q=';
+var uUrl = 'https://api.openweathermap.org/data/2.5/onecall?lat=';
 var appid = '&units=imperial&appid=';
 var key = '21d337020a0247b874a0d43202c4ad83';
+var img = 'http://openweathermap.org/img/w/';
 var weather = '';
-var currentDate = moment().format( 'MM/DD/YYYY' );
+var cities = [];
+var cDate1 = moment().format( 'MM/DD/YYYY' );
 
-//working code
+
+//function to display search history in the left column of the app
 var searchHistory = function () {
-    console.log( cities );
-
+    cities = JSON.parse( localStorage.getItem( 'cities' ) );
     if ( !cities ) {
         cities = [];
+        return;
     } else {
-        for ( var i = 0; i < history.length; i++ ) {
-            var historyEl = $( 'search-history' );
-            historyEl.text( cities[i] );
-            historyEl.addClass( 'list-group-item btn btn-light' );
+        for ( var i = 0; i < cities.length; ++i ) {
+            //BCS learning assistant advised to do this with less jQuery
+            var historyEl = document.createElement( 'p' );
+            historyEl.textContent = cities[i];
+            historyEl.classList = 'clear list-group-item btn btn-light';
             $( '#search-history' ).append( historyEl );
+            console.log( historyEl );
         }
     }
 };
 
-// pings API when user hits submit after city
+//function to grab the searched for city and return required data elements
 var getWeather = function ( city ) {
-    fetch( url + city + appid + key ).then( function ( response ) {
+    var mainWeather = wUrl + city + appid + key;
+    fetch( mainWeather ).then( function ( response ) {
         if ( response.ok ) {
             response.json().then( function ( data ) {
                 var lat = data.city.coord.lat;
                 var lon = data.city.coord.lon;
                 var location = data.city.name;
                 console.log( lat, lon, location );
-                $( '#current-city' ).text( location + ' ' + currentDate );
-                /* $('#weather-img').attr('src', url + json.list.weather[0].icon + '.png'); */
+                $( '#current-city' ).text( location + ' ' + cDate1 );
+                $( '#weather-img' ).attr(
+                    'src',
+                    img + data.list[0].weather[0].icon + '.png'
+                );
                 $( '#temperature' ).text( data.list[0].main.temp.toFixed( 0 ) + '°F' );
                 $( '#temp_low' ).text( data.list[0].main.temp_min.toFixed( 0 ) + '°F' );
                 $( '#temp_high' ).text( data.list[0].main.temp_max.toFixed( 0 ) + '°F' );
                 $( '#humidity' ).text( data.list[0].main.humidity + '%' );
                 $( '#windspeed' ).text( data.list[0].wind.speed.toFixed( 0 ) + ' ' + 'mph' );
-                /*                 setHistory( location );
-                 */                /* getForecast( lat, lon ); */
 
-                //fetch uvi
-                fetch( urlUVI + 'lat=' + lat + '&lon=' + lon + appid + key ).then( function ( response ) {
+                //pass the location into the setHistory function to store the city
+                setHistory( location );
+                //pass lat/lon into the getForecast function
+                getForecast( lat, lon );
+
+                fetch( uUrl + lat + '&lon=' + lon + appid + key ).then( function (
+                    response
+                ) {
                     if ( response.ok ) {
                         response.json().then( function ( data ) {
                             $( '#uvIndex' ).text( data.current.uvi );
-                            if ( data.current.uvi < 3 ) {
-                                $( '#uvIndex' ).css( 'background-color', 'green' );
-                            } else if ( uvi < 6 ) {
-                                $( '#uvIndex' ).css( 'background-color', 'yellow' );
-                            } else if ( uvi < 8 ) {
-                                $( '#uvIndex' ).css( 'background-color', 'orange' );
-                            } else {
-                                $( '#uvIndex' ).css( 'background-color', 'red' );
+                            console.log( data.current.uvi );
+                            if ( data.current.uvi > 2 && data.current.uvi < 5 ) {
+                                $( '#uvIndex' ).addClass( 'bg-warning' );
+                            } else if ( data.current.uvi < 2 ) {
+                                $( '#uvIndex' ).addClass( 'bg-success' );
+                            } else if ( data.current.uvi > 5 ) {
+                                $( '#uvIndex' ).addClass( 'bg-danger' );
                             }
-                        } )
-                    }
-                } )
-
-                //fetch 5-day forecast
-                fetch( url + city + appid + key ).then( function ( response ) {
-                    if ( response.ok ) {
-                        response.json().then( function ( data ) {
-
-                            var dayCounter = 1;
-
-                            /* var oneCall = fetch( url + city + appid + key );
-                            console.log(oneCall);
-                            fetch(oneCall).then(function (response) {
-                                // display forecast data from API
-                                if (response.ok) {
-                                    response.json().then(function (data) {});
-                                } */
-
-                            for ( var i = 0; i < data.list.length; i++ ) {
-                                var dateTime = data.list[i].dt;
-                                var date = dateTime.split( " " )[0];
-                                var time = dateTime.split( " " )[1];
-                                if ( time === "15:00:00" ) {
-                                    var year = date.split( "-" )[0];
-                                    var month = date.split( "-" )[1];
-                                    var day = date.split( "-" )[2];
-                                    $( "#day-" + dayCounter ).children( ".forcast-date" ).text( month + "/" + day + "/" + year );
-                                    $( "#day-" + dayCounter ).children( ".forcast-temp" ).text( "Temp: " + ( ( data.list[i].main.temp.toFixed( 0 ) + "°F" ) ) );
-                                    $( "#day-" + dayCounter ).children( ".forecast-hum" ).text( "Humidity: " + data.list[i].main.humidity + "%" );
-                                    day_counter++;
-                                };
-                            };
                         } );
+                    } else {
+                        alert( 'Sorry, unable to display UV Index' );
                     }
                 } );
             } );
-        }
-    } );
-};
-
-/* var getForecast = function ( lat, lon ) {
-
-    
-}; */
-
-/* }); */
-
-// Old getforecast data from weather API (use the onecall api here)
-/*var getForecast = function ( lat, lon ) {
-    fetch( url + city + appid + key ).then( function ( response ) {
-        // display forecast data from API
-        if ( response.ok ) {
-            for ( var i = 0; i < response.list.length; i++ ) {
-                var dateTime = response.list[i].dt_txt;
-                var date = dateTime.split( ' ' )[0];
-                var time = dateTime.split( ' ' )[1];
-                if ( time === '15:00:00' ) {
-                    var year = date.split( '-' )[0];
-                    var month = date.split( '-' )[1];
-                    var day = date.split( '-' )[2];
-                    $( '#day-' + dayCounter )
-                        .children( '.card-date' )
-                        .text( month + '/' + day + '/' + year );
-                    $( '#day-' + dayCounter )
-                    .children( '.weather-icon' )
-                .attr(
-                    'src',
-                    'https://api.openweathermap.org/img/w/' +
-                        response.list[i].weather[i].icon +
-                        '.png'
-                );
-                    $( '#day-' + dayCounter )
-                        .children( '.weather-temp' )
-                        .text( 'Temp: ' + ( response.list[i].main.temp.toFixed( 0 ) + '°F' ) );
-                    $( '#day-' + dayCounter )
-                        .children( '.weather-humidity' )
-                        .text( 'Humidity: ' + response.list[i].main.humidity + '%' );
-                    dayCounter++;
-                }
-            }
         } else {
             alert(
-                'Please make sure the city you are searching for is spelled correctly!'
+                'Your search did not work, please make sure the city is spelled correctly!'
             );
         }
     } );
-};*/
+};
 
-//function to get the city (working)
+//function to get the five day forecast data from the oncall weather api
+var getForecast = function ( lat, lon ) {
+    var oneCall = uUrl + lat + '&lon=' + lon + appid + key;
+    fetch( oneCall ).then( function ( response ) {
+        // display forecast data from API
+        if ( response.ok ) {
+            response.json().then( function ( data ) {
+                var forecast = data.daily.splice( 3 );
+                console.log( forecast );
+
+                for ( var i = 0; i < forecast.length; ++i ) {
+                    $( '.forecast' ).each( function () {
+                        var cDate2 = moment()
+                            .add( i + 1, 'days' )
+                            .format( 'MM/DD YYYY' );
+                        $( this )
+                            .children( '.forecast-date' + i )
+                            .text( cDate2 );
+                        console.log( 'src', img + forecast[i].weather[0].icon + '.png' );
+                        $( this )
+                            .children( '.forecast-icon' + i )
+                            .attr( 'src', img + forecast[i].weather[0].icon + '.png' );
+                        $( this )
+                            .children( '.forecast-temp' + i )
+                            .text( 'Temp: ' + forecast[i].temp.day + 'F' );
+                        $( this )
+                            .children( '.forecast-hum' + i )
+                            .text( 'Hum: ' + forecast[i].humidity + '%' );
+                    } );
+                }
+            } );
+        } else {
+            alert(
+                'Sorry, displaying the five day forecast is not working. Please try again.'
+            );
+        }
+    } );
+};
+
+//function to get the city
 var getCity = function ( e ) {
     e.preventDefault();
-    //create a new variable for city to pass into the getForecast function
+    //create a new variable for city to pass into the getWeather function
     var cityEl = $( '#city' );
     var city = $.trim( cityEl.val() );
-    console.log( city );
+
     if ( city ) {
         getWeather( city );
-        cityEl.value = '';
+        cityEl.val( '' );
     } else {
         alert( 'Please enter a City' );
     }
+
     console.log( e );
-    /*  if (citiesHistory.indexOf(city) === -1){
-         citiesHistory.push(city);
-     }
-     localStorage.setItem("searches", JSON.stringify(citiesHistory)); */
 };
 
-/* $('.btn').click(getWeather);
-$('.btn').click(getForecast);
-$('#search-city').click(searchHistory);
-searchHistory(); */
-$( '#submit' ).on( 'click', getCity );
+//function to set the history for cities searched
+var setHistory = function ( location ) {
+    if ( cities.includes( location ) ) {
+        return;
+    } else {
+        //if a location does exist, then push the value to the cities variable
+        cities.push( location );
 
-/* $( '#submit' ).on( 'click', searchHistory );
- */
+        //ths will put the most recent 8 entries at the top of the list
+        if ( cities.length > 8 ) {
+            cityHistory.shift();
+        }
+
+        //set the local storage with a key name of cities
+        localStorage.setItem( 'cities', JSON.stringify( cities ) );
+
+        //needed to create a class that would allow us to grab the created p elements so we could clear the list and append the new cities
+        $( '.clear' ).each( function () {
+            $( this ).remove();
+        } );
+        searchHistory();
+    }
+};
+
+var searchList = function () {
+    var search = $( this ).text().trim();
+    getWeather( search );
+};
+
+$( '#search-city' ).on( 'click', getCity );
+$( '#search-history' ).on( 'click', '.clear', searchList );

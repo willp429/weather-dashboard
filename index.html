@@ -17,89 +17,75 @@
     <header class="nav justify-content-center navbar-dark bg-dark">
         <h1 class="text-light">Weather Dashboard</h1>
     </header>
+    <!-- this is a div container for the search by city section -->
     <div class="d-flex flex-column flex-md-row flex-sm-column" id="container1">
         <div class="col-md-2 col-12 bg-light p-3">
-            <div>
-                <h4 class="pb-3 text-center">Search by City</h4>
-                <div class="input-group pb-3">
-                    <input class="form-control" id="city" type="text" placeholder="Search" aria-label="Search">
-                    <div class="input-group-append">
-                        <button class="btn btn-outline-primary btn-info" type="submit" id="search-city"><i
-                                class="fas fa-search text-white" id="submit" aria-hidden="true"></i></button>
-                    </div>
-                </div>
+            <!-- search by city input -->
+            <h4 class="pb-3 text-center">Search by City</h4>
+            <div class="input-group pb-3" id="search-div">
+                <input class="form-control" id="city" type="text" placeholder="Search city">
+                <button class="btn btn-outline-primary btn-info" type="submit" id="search-city">
+                    <i class="fas fa-search text-white"></i>
+                </button>
             </div>
-            <div id="search-history" class="w-100 btn-group-vertical "></div>
+            <!-- this is where the history display will go -->
+            <div id="history">
+                <div id="search-history" class="w-100 btn-group-vertical "></div>
+            </div>
         </div>
+        <!-- main div container that will display the city search along additional data elelments -->
         <div class="col-12 col-md-10">
             <div class="form-group pt-3">
                 <div class="table border " id="table2">
                     <div class="row p-3">
                         <div class="col-md-9">
-                            <div class="city" id="currentDay"></div>
-                            <!-- <div class="temperature"></div>
-                            <div class="temp_low"></div>
-                            <div class="temp_high"></div>
-                            <div class="humidity"></div>
-                            <div class="windspeed"></div>
-                            <div class="uvIndex"></div> -->
                             <h3><span id="current-city"></span><img id="weather-img" src=""></h3>
                             <p>Temperature: <span id="temperature"></span></p>
                             <p>Low Temperature: <span id="temp_low"></span></p>
                             <p>High Temperature: <span id="temp_high"></span></p>
                             <p>Humidity: <span id="humidity"></span></p>
                             <p>Wind Speed: <span id="windspeed"></span></p>
-                            <p>UV Index: <span id="uvIndex" class="badge text-white"></p>
+                            <p>UV Index: <span id="uvIndex" class="text-light py-1 px-2 rounded"></span></p>
                         </div>
                     </div>
                 </div>
-
+                <!-- header and div container that will display/hold the five day forecast data -->
                 <h3>5-Day Forecast:</h3>
                 <div class="col-12 d-md-flex flex-lg-row justify-content-between pt-md-3 text-light">
-                    <!--Day 1-->
-                    <div id="days" class="forecast card bg-primary py-3 pl-2 pr-4 mb-3">
-                        <div id="day-1" class="card-body p-2">
-                            <h3 class="forecast-date">Date</h3>
-                            <p class="forecast-icon"></p>
-                            <p class="forecast-temp">Temp:</p>
-                            <p class="forecast-hum">Hum: </p>
-                        </div>
+                    <!--day 1-->
+                    <div class="forecast card bg-primary py-3 pl-2 pr-4 mb-3">
+                        <h3 class="forecast-date0">Date:</h3>
+                        <img class="forecast-icon0" src="">
+                        <p class="forecast-temp0">Temp:</p>
+                        <p class="forecast-hum0">Hum: </p>
                     </div>
-                    <!--Day 2-->
-                    <div id="days" class="forecast card bg-primary py-3 pl-2 pr-4 mb-3">
-                        <div id="day-2" class="card-body p-2">
-                            <h3 class="forecast-date">Date</h3>
-                            <p class="forecast-icon"></p>
-                            <p class="forecast-temp">Temp:</p>
-                            <p class="forecast-hum">Hum: </p>
-                        </div>
+                    <!--day 2-->
+                    <div class="forecast card bg-primary py-3 pl-2 pr-4 mb-3">
+                        <h3 class="forecast-date1">Date:</h3>
+                        <img class="forecast-icon1" src="">
+                        <p class="forecast-temp1">Temp:</p>
+                        <p class="forecast-hum1">Hum: </p>
                     </div>
-                    <!--Day 3-->
-                    <div id="days" class="forecast card bg-primary py-3 pl-2 pr-4 mb-3">
-                        <div id="day-3" class="card-body p-2">
-                            <h3 class="forecast-date">Date</h3>
-                            <p class="forecast-icon"></p>
-                            <p class="forecast-temp">Temp:</p>
-                            <p class="forecast-hum">Hum: </p>
-                        </div>
+                    <!--day 3-->
+                    <div class="forecast card bg-primary py-3 pl-2 pr-4 mb-3">
+                        <h3 class="forecast-date2">Date:</h3>
+                        <img class="forecast-icon2" src="">
+                        <p class="forecast-temp2">Temp:</p>
+                        <p class="forecast-hum2">Hum: </p>
                     </div>
-                    <!--Day 4-->
-                    <div id="days" class="forecast card bg-primary py-3 pl-2 pr-4 mb-3">
-                        <div id="day-4" class="card-body p-2">
-                            <h3 class="forecast-date">Date</h3>
-                            <p class="forecast-icon"></p>
-                            <p class="forecast-temp">Temp:</p>
-                            <p class="forecast-hum">Hum: </p>
-                        </div>
+                    <!--day 4-->
+                    <div class="forecast card bg-primary py-3 pl-2 pr-4 mb-3">
+                        <h3 class="forecast-date3">Date:</h3>
+                        <img class="forecast-icon3" src="">
+                        <p class="forecast-temp3">Temp:</p>
+                        <p class="forecast-hum3">Hum: </p>
                     </div>
-                    <!--Day 5-->
-                    <div id="days" class="forecast card bg-primary py-3 pl-2 pr-4 mb-3">
-                        <div id="day-5" class="card-body p-2">
-                            <h3 class="forecast-date">Date</h3>
-                            <p class="forecast-icon"></p>
-                            <p class="forecast-temp">Temp:</p>
-                            <p class="forecast-hum">Hum: </p>
-                        </div>
+                    <!--day 5-->
+                    <div class="forecast card bg-primary py-3 pl-2 pr-4 mb-3">
+                        <h3 class="forecast-date4">Date:</h3>
+                        <img class="forecast-icon4" src="">
+                        <p class="forecast-temp4">Temp:</p>
+                        <p class="forecast-hum4">Hum: </p>
                     </div>
                 </div>
             </div>
